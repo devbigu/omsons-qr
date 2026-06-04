@@ -1,6 +1,11 @@
 FROM php:8.2-apache
 
-RUN docker-php-ext-install pdo_mysql mysqli
+RUN set -eux; \
+    docker-php-ext-install pdo_mysql mysqli; \
+    a2dismod -f mpm_event mpm_worker || true; \
+    a2enmod mpm_prefork rewrite; \
+    echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf; \
+    a2enconf servername
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html
 ENV OMQR_SESSION_DRIVER=database
