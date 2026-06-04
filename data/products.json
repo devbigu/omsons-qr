@@ -1,0 +1,12 @@
+[
+    {
+        "id": "puricap-pes",
+        "product_name": "Puricap PES",
+        "catalog_no": "OM553-02-02-045",
+        "pore_size": "0.45 + 0.2 um",
+        "membrane_type": "PES",
+        "lot_suffix": "E",
+        "qr_url_template": "https://example.com/coa/{lot}/{serial}",
+        "created_at": "2026-06-04T13:24:54+05:30"
+    }
+]

@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.vercel/
+vendor/
+node_modules/
