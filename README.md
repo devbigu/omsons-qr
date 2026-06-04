@@ -112,9 +112,33 @@ Render runs this PHP app with Docker. The project includes:
 ```text
 Dockerfile
 .dockerignore
+render.yaml
 ```
 
 The Docker service exposes only `public/` as the web root. Internal folders such as `config/`, `src/`, `data/`, and `database/` are not served publicly.
+
+### Easiest Render Setup: Blueprint
+
+Use the `render.yaml` Blueprint in this repo. It creates both services:
+
+```text
+omsons-qr-mysql  private MySQL service
+omsons-qr        PHP web service
+```
+
+Steps:
+
+1. Push this repo to GitHub.
+2. In Render, click `New` -> `Blueprint`.
+3. Connect the `devbigu/omsons-qr` repo.
+4. Confirm the services from `render.yaml`.
+5. Deploy.
+
+The Blueprint wires the PHP app to MySQL automatically using Render's private service hostname and generated MySQL password.
+
+Important: this uses Render `starter` services and a 10 GB persistent disk for MySQL. That is not the free static-site style of deployment.
+
+### Manual Render Setup
 
 Create a MySQL service first. If you use Render's MySQL private service, use MySQL 8 and attach a disk:
 
@@ -158,3 +182,16 @@ The app creates its tables on first load if the database user can create tables.
 ```text
 database/schema.sql
 ```
+
+### Import From Local phpMyAdmin
+
+Your local phpMyAdmin is useful for exporting your XAMPP database.
+
+1. Open `http://localhost/phpmyadmin`.
+2. Select database `omqr`.
+3. Click `Export`.
+4. Choose `Custom`.
+5. Export tables and data as SQL.
+6. Import that SQL into the hosted MySQL database, or run it with the MySQL CLI using the hosted database connection details.
+
+Do not use `127.0.0.1` on Render. That only points to the PHP container itself, not your XAMPP MySQL.
