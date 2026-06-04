@@ -105,85 +105,40 @@ vercel.json
 .env.example
 ```
 
-## Render Deploy
+## Railway Deploy
 
-Render runs this PHP app with Docker. The project includes:
+This repo is configured for Railway Railpack without a Dockerfile:
 
 ```text
-Dockerfile
-.dockerignore
-render.yaml
+railway.json
+composer.json
 ```
 
-The Docker service exposes only `public/` as the web root. Internal folders such as `config/`, `src/`, `data/`, and `database/` are not served publicly.
+Create a Railway project from GitHub repo `devbigu/omsons-qr`, then add a MySQL service in the same Railway project.
 
-### Easiest Render Setup: Blueprint
-
-Use the `render.yaml` Blueprint in this repo. It creates both services:
+Set these app service variables:
 
 ```text
-omsons-qr-mysql  private MySQL service
-omsons-qr        PHP web service
-```
-
-Steps:
-
-1. Push this repo to GitHub.
-2. In Render, click `New` -> `Blueprint`.
-3. Connect the `devbigu/omsons-qr` repo.
-4. Confirm the services from `render.yaml`.
-5. Deploy.
-
-The Blueprint wires the PHP app to MySQL automatically using Render's private service hostname and generated MySQL password.
-
-Important: this uses Render `starter` services and a 10 GB persistent disk for MySQL. That is not the free static-site style of deployment.
-
-### Manual Render Setup
-
-Create a MySQL service first. If you use Render's MySQL private service, use MySQL 8 and attach a disk:
-
-```text
-Mount Path: /var/lib/mysql
-Size: 10 GB or more
-```
-
-Set the MySQL service variables:
-
-```text
-MYSQL_DATABASE=omqr
-MYSQL_USER=omqr_user
-MYSQL_PASSWORD=choose-a-strong-password
-MYSQL_ROOT_PASSWORD=choose-another-strong-password
-```
-
-After MySQL is running, create a Render Web Service from this repo:
-
-```text
-Language: Docker
-Branch: main
-```
-
-Set these web service environment variables:
-
-```text
-OMQR_DB_HOST=your-render-mysql-private-host
-OMQR_DB_PORT=3306
-OMQR_DB_NAME=omqr
-OMQR_DB_USER=omqr_user
-OMQR_DB_PASS=your MYSQL_PASSWORD
-OMQR_DB_AUTO_CREATE=false
+DATABASE_URL=${{MySQL.MYSQL_URL}}
+OMQR_DB_AUTO_CREATE=true
 OMQR_SESSION_DRIVER=database
 OMQR_ASSET_BASE=/assets
 OMQR_APP_ENTRY=/
+RAILPACK_PHP_ROOT_DIR=/app/public
+RAILPACK_PHP_EXTENSIONS=pdo_mysql,mysqli
 ```
 
-The app creates its tables on first load if the database user can create tables. You can also import:
+If your database service is not named `MySQL`, replace `MySQL` with the exact service name.
+
+After the app opens once and tables are created, change:
 
 ```text
-database/schema.sql
+OMQR_DB_AUTO_CREATE=false
 ```
 
-### Import From Local phpMyAdmin
+Then redeploy.
+
+## Import From Local phpMyAdmin
 
 Your local phpMyAdmin is useful for exporting your XAMPP database.
 
@@ -194,4 +149,4 @@ Your local phpMyAdmin is useful for exporting your XAMPP database.
 5. Export tables and data as SQL.
 6. Import that SQL into the hosted MySQL database, or run it with the MySQL CLI using the hosted database connection details.
 
-Do not use `127.0.0.1` on Render. That only points to the PHP container itself, not your XAMPP MySQL.
+Do not use `127.0.0.1` on Railway. That only points to the app container itself, not your XAMPP MySQL.

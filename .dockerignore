@@ -1,8 +1,0 @@
-.git
-.vercel
-node_modules
-vendor
-*.log
-*.tmp
-Dockerfile
-README.md
